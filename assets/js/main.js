@@ -80,22 +80,25 @@ let shoppingList = {
   },
 };
 
+//------------------------------- CREATE TABLE
 const createTable = () => {
   const table = document.createElement('table');
   const thead = document.createElement('thead');
   const tbody = document.createElement('tbody');
+  const tfoot = document.createElement('tfoot');
 
-  const Headtr = document.createElement('tr');
+  const headerRow = document.createElement('tr');
   ['Catégorie', 'Produit', 'Prix', 'Quantité', 'Sous-total', 'Action'].forEach((text) => {
     const th = document.createElement('th');
     th.textContent = text;
-    Headtr.appendChild(th);
+    headerRow.appendChild(th);
   });
+  thead.appendChild(headerRow);
 
   for (const category in shoppingList.products) {
     shoppingList.products[category].forEach((product) => {
       const row = document.createElement('tr');
-
+      // ------------------------------- ADD COL
       [
         category,
         product.product,
@@ -107,11 +110,28 @@ const createTable = () => {
         td.textContent = value;
         row.appendChild(td);
       });
+
+      //------------------------------- ADD DELETE BTN
+      const td = document.createElement('td');
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Supprimer';
+      deleteBtn.addEventListener('click', () => {
+        deleteProduct(category, product);
+        updateTable;
+      });
+      td.appendChild(deleteBtn);
+      row.appendChild(td);
+      tbody.appendChild(row);
     });
   }
+
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  table.appendChild(tfoot);
+
+  return table;
 };
 
-console.log(shoppingList.products);
 //------------------------------- UPDATE TABLEAU
 const updateTable = () => {
   const existingTable = document.querySelector('table');
@@ -134,6 +154,18 @@ const addProduct = (category, productName, price, quantity) => {
   });
   updateTable();
 };
+
+//------------------------------- AJOUTER CATEGORIES
+
+const addCategory = (categoryName) => {
+  if (!shoppingList.products[categoryName]) {
+    shoppingList.products[categoryName] = [];
+    updateTable();
+  } else {
+    alert("t'y es bête");
+  }
+};
+
 //------------------------------- SUPPRIMER PRODUIT (btn)
 
 const deleteProduct = (category, product) => {
@@ -145,6 +177,21 @@ const deleteProduct = (category, product) => {
   }
 };
 
+//------------------------------- UPDATE SELECT
+
+const updateCategorySelect = () => {
+  const select = document.getElementById('category-select');
+  if (select) {
+    select.innerHTML = ` `;
+    Object.keys(shoppingList.products).forEach((category) => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category;
+      select.appendChild(option);
+    });
+  }
+};
+
 //------------------------------- CREATE ADD BTN
 
 const createAddProductButton = () => {
@@ -152,4 +199,22 @@ const createAddProductButton = () => {
   btn.textContent = 'Ajoutez un produit svp';
   btn.addEventListener('click', 'showAddProductModal');
   document.appendChild('button');
+};
+
+//------------------------------- CREATE ADD PRODUCTS IN MODAL
+
+const createAddProductModal = () => {
+  const modal = document.createElement('div');
+  modal.className = 'hidden modal';
+  modal.id = 'addProductModal';
+
+  const overlay = document.createElement('div');
+  overlay.className = 'hidden overlay';
+  overlay.id = 'overlay';
+
+  const form = document.createElement('form');
+  const categorieLabel = document.createElement('label');
+  categorieLabel.textContent = 'Catégorie';
+
+  const categoriSelect = document.createElement('select');
 };
