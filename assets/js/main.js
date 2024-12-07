@@ -218,3 +218,17 @@ const createAddProductModal = () => {
 
   const categoriSelect = document.createElement('select');
 };
+
+//------------------------------- CREATE BTN
+
+const createButtons = () => {
+  const addProductButton = document.createElement('button');
+  addProductButton.textContent = 'Ajouter un produit';
+  addProductButton.addEventListener('click', showAddProductModal);
+  document.body.appendChild(addProductButton);
+
+  const addCategoryButton = document.createElement('button');
+  addCategoryButton.textContent = 'Ajouter une catégorie';
+  addCategoryButton.addEventListener('click', showAddCategoryModal);
+  document.body.appendChild(addCategoryButton);
+};
