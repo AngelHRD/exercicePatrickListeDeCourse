@@ -111,7 +111,7 @@ const createTable = () => {
   }
 };
 
-console.log(createTable);
+console.log(shoppingList.products);
 //------------------------------- UPDATE TABLEAU
 const updateTable = () => {
   const existingTable = document.querySelector('table');
@@ -120,11 +120,10 @@ const updateTable = () => {
   }
   document.body.appendChild(createTable());
 };
-console.log(updateTable);
 
 //------------------------------- AJOUTER PRODUIT
 
-const addProduct = (category,productName,price,quantity) => {
+const addProduct = (category, productName, price, quantity) => {
   if (!shoppingList.products[category]) {
     shoppingList.products[category] = [];
   }
@@ -135,6 +134,22 @@ const addProduct = (category,productName,price,quantity) => {
   });
   updateTable();
 };
-//------------------------------- SUPPRIMER PRODUIT
+//------------------------------- SUPPRIMER PRODUIT (btn)
 
-const deleteProduct = ()
+const deleteProduct = (category, product) => {
+  shoppingList.products[category] = shoppingList.products[category].filter(
+    (p) => p.product !== product.product,
+  );
+  if (shoppingList.products[category].length === 0) {
+    delete shoppingList.products[category];
+  }
+};
+
+//------------------------------- CREATE ADD BTN
+
+const createAddProductButton = () => {
+  const btn = document.createElement('button');
+  btn.textContent = 'Ajoutez un produit svp';
+  btn.addEventListener('click', 'showAddProductModal');
+  document.appendChild('button');
+};
