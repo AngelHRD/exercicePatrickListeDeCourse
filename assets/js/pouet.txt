@@ -1,0 +1,46 @@
+CRUD
+create
+read
+update
+delete
+
+liste de course dynamique basée sur un objet literral qui contient une liste de produit
+2 method : une pour le total et une pour le sous total
+à faire en un seul fichier
+
+--------------------------------------------------------
+information dont on dispose :
+on a un objet littéral (product) et 3 panneaux a créer (1tableau et 2 modales)
+--------------------------------------------------------
+1. a partir d'un objet littéral, déclarer des méthodes qui permettront d'ajouter des clefs, tableaux,...
+ce qu'il faut faire :
+dans l'objet littéral, faire 2 méthodes. l'une qui calcule le sous total et l'autre qui calcule le total
+NB Rappel: En JavaScript, une méthode est une fonction qui est associée à un objet. Contrairement à une fonction classique qui peut être définie indépendamment, une méthode est définie à l'intérieur d'un objet et est souvent utilisée pour manipuler ou accéder aux propriétés de cet objet.
+
+Cet objet étant manipulable, on va pouvoir ajouter des clefs (catégories) qui appellent des tableaux qui contiennent eux-mêmes des objets avec les infos sur le produit (product, price, quantity)
+
+2. premier panneau => celui qui affiche la liste de course à partir de l'objet littéral qu'on a
+A. commencer par définir notre entête (header) qui reprends categorie, produit,... 
+2 possibilités  : a. en js définir un th catégorie, un th produit, un th prix, … OU b. changer de façon dynamique avec des clefs et valeurs
+B. réaliser le body, celui ci est dynamique car on doit y récuperer les données et meme en ajouter
+on va créer un algorithme qui populate le body : il faut afficher le nom de la clef (categorie) -> objet.keys
+et à partir de cette clé, ça ajoute un nouvel objet qui contient product, price, quantity
+Il faudra faire un flat ou flat map pour créer le tableau qui reprend tout
+!! d'abord regarder dans la console 
+ajouter dans html final et faire en sorte que chaque ligne a un bouton pour supprimer
+ajouter le total
+ajouter les 2 boutons (bouton toggle)
+
+
+3. deuxième tableau : ajout d'un produit
+créer une modale : quelque chose qui va apparaitre et disparaite 
+pour se faire on crée une div dans lql se trouve un form avec à chaque fois un label (categorie, produit, prix et quantité) et un input. L'un est de type select, l'un est de type string et les 2 derniers de type number
+
+pour les boutons, le bouton annuler est le meme que celui qui ouvre. le ajouter c'est un nouveau. il y a des addeventlistener sur les 2.
+
+le select : faire une algo pour populate le select créer une variable qu'on popule avec object.key
+
+en cliquant sur ajouter, il faut qu'un nouveau produit soit créé dans la categorie choisie
+
+
+les verifications : voir si tous les champs sont biens remplis

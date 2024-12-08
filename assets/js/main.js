@@ -72,11 +72,10 @@ const updateTable = () => {
       const deleteBtn = document.createElement('button');
       deleteBtn.textContent = 'Supprimer';
       deleteBtn.className =
-        'px-1 py-1 text-white bg-green-900 rounded hover:bg-green-900 ';
+        'px-1 py-1 text-white bg-[#042f2e] rounded hover:bg-[#042f2e] ';
 
       deleteBtn.addEventListener('click', () => {
         deleteProduct(category, product);
-        updateTable();
       });
       actionCell.appendChild(deleteBtn);
       row.appendChild(actionCell);
@@ -107,8 +106,6 @@ const addCategory = (categoryName) => {
   if (!shoppingList.products[categoryName]) {
     shoppingList.products[categoryName] = [];
     updateTable();
-  } else {
-    alert('Cette catégorie existe déjà !');
   }
 };
 
@@ -139,7 +136,7 @@ const updateCategorySelect = () => {
   }
 };
 
-//-------------------------------ADD CATEGORY AND ADD PRODUCTS BTN
+//------------------------------- BTNCATEGORY AND BTN PRODUCTS
 
 const createButtons = () => {
   const addProductButton = document.createElement('button');
@@ -153,22 +150,19 @@ const createButtons = () => {
   addCategoryButton.textContent = 'Ajouter une catégorie';
   addCategoryButton.className =
     'px-2 py-2 my-3 text-white bg-[#115e59] rounded hover:bg-[#042f2e] rounded-lg	';
-  addCategoryButton.addEventListener('click', () => {
-    const categoryName = prompt('Nom de la nouvelle catéorie :');
-    if (categoryName) addCategory(categoryName);
-  });
+  addCategoryButton.addEventListener('click', showAddCategoryModal);
   document.body.appendChild(addCategoryButton);
 };
 
 //------------------------------- CREATE MODAL FOR ADD PRODUCT
 
 const createAddProductModal = () => {
-  const modal = document.createElement('div');
-  modal.className =
+  const modalProduct = document.createElement('div');
+  modalProduct.className =
     'fixed inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-50';
-  modal.id = 'addProductModal';
+  modalProduct.id = 'addProductModal';
 
-  modal.innerHTML = `
+  modalProduct.innerHTML = `
      <div class="bg-white p-6 rounded shadow-lg w-96">
       <h2 class="text-lg font-bold mb-4 text-center">Ajouter un produit</h2>
       <form id="addProductForm" class="space-y-4">
@@ -198,7 +192,7 @@ const createAddProductModal = () => {
         </label>
         
         <div class="flex justify-between">
-          <button type="button" id="cancel-button" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
+          <button type="button" id="cancel-button-product" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
             Annuler
           </button>
           <button type="submit" class="px-4 py-2 bg-[#115e59] text-white rounded-lg hover:bg-[#042f2e]">
@@ -209,27 +203,73 @@ const createAddProductModal = () => {
     </div>
   `;
 
-  document.body.appendChild(modal);
+  document.body.appendChild(modalProduct);
 
   // Btn annuler
-  document.querySelector('#cancel-button').addEventListener('click', () => {
-    modal.classList.add('hidden');
+  document.querySelector('#cancel-button-product').addEventListener('click', () => {
+    modalProduct.classList.add('hidden');
   });
 
-  // Soumission formulaire
+  // Soumission product
   document.querySelector('#addProductForm').addEventListener('submit', (e) => {
     e.preventDefault();
-    const category = document.querySelector('#modal-category-select').value;
+    const categorySelect = document.querySelector('#modal-category-select').value;
     const productName = document.querySelector('#modal-product-name').value;
     const price = document.querySelector('#modal-product-price').value;
     const quantity = document.querySelector('#modal-product-quantity').value;
 
-    if (category && productName && price && quantity) {
-      addProduct(category, productName, price, quantity);
-      modal.classList.add('hidden');
+    if (categorySelect && productName && price && quantity) {
+      addProduct(categorySelect, productName, price, quantity);
+      modalProduct.classList.add('hidden');
     }
   });
 };
+
+//------------------------------- CREATE MODAL FOR ADD CATEGORY
+
+const createAddCategoryModal = () => {
+  const modalCategory = document.createElement('div');
+  modalCategory.className =
+    'fixed inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-50';
+  modalCategory.id = 'addCategoryModal';
+  modalCategory.innerHTML = `
+     <div class="bg-white p-6 rounded shadow-lg w-96">
+      <h2 class="text-lg font-bold mb-4 text-center">Ajouter une catégorie</h2>
+      <form id="addCategoryForm" class="space-y-4">>
+        <label>
+          <span class="text-gray-800">Catégorie</span>
+          <input type="text" id="modal-category-name" class="w-full border rounded px-3 py-2" />
+        </label>
+        <div class="flex justify-between">
+          <button type="button" id="cancel-button-category" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
+            Annuler
+          </button>
+          <button type="submit" class="px-4 py-2 bg-[#115e59] text-white rounded-lg hover:bg-[#042f2e]">
+            Ajouter
+          </button>
+        </div>
+      </form>
+     </div>
+  `;
+  document.body.appendChild(modalCategory);
+
+  //btn annuler
+  document.querySelector('#cancel-button-category').addEventListener('click', () => {
+    modalCategory.classList.add('hidden');
+  });
+
+  //soumission category
+  document.querySelector('#addCategoryForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const category = document.querySelector('#modal-category-name').value;
+    if (category) {
+      addCategory(category);
+      modalCategory.classList.add('hidden');
+    }
+  });
+};
+
+//------------------------------- SHOW MODAL PRODUCT
 
 const showAddProductModal = () => {
   const modal = document.querySelector('#addProductModal');
@@ -242,6 +282,19 @@ const showAddProductModal = () => {
   }
 };
 
+//------------------------------- SHOW MODAL PRODUCT
+
+const showAddCategoryModal = () => {
+  const modalCategory = document.querySelector('#addCategoryModal');
+  if (modalCategory) {
+    modalCategory.classList.remove('hidden');
+    // const category = document.querySelector('#modal-category-name');
+    // category.innerHTML = Object.keys{shoppingList.products}
+    // .
+  }
+};
+
 createAddProductModal();
+createAddCategoryModal();
 createButtons();
 updateTable();
