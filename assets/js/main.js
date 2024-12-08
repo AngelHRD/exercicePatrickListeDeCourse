@@ -1,55 +1,3 @@
-//creer une liste de course avec un objet litteral qui contient une liste de produit avec leur price et leur quantité et 2 methodes qui calcule le total de la liste de course et l'affiche en HTMl, faite un affichage propre
-
-//voici la liste de course:
-// products:{
-//     fruits:[
-//         {product : 'pomme', price : 0.5, quantity: 2},
-//         {product : 'poire', price : 0.7, quantity: 3},
-//     ],
-//     vegetables:[
-//         {product : 'carotte', price : 1, quantity: 2},
-//         {product : 'patate', price : 5.30, quantity: 1},
-//     ],
-//     drinks:[
-//         {product : 'coca', price : 2.49, quantity: 2},
-//         {product : 'orangina', price : 2.25, quantity: 3},
-//     ],
-// }
-
-// On commence avec un objet litteral (il y aura 2 méthodes(CalculTotal et SousTotal))
-// 3 panneaux à créer(screen)
-// 2 btn pour Catégorie (sont des clés[...]))
-// Et Produit (rentrera dans un tableau et sera un objet avec 3clés(product,price,qtt)
-
-// Pour les 3 panneaux :
-
-// 1er PANNEAU
-
-// 1.0 Afficher listProduct + total doit y avoir :
-// des thead pour le "header" du tableau
-// 2 possibilité : avec des th(statique) soit avec des clés(dynamique faut map (objet.key))
-
-// 2.0 Afficher le tableau le body (corp tableau)
-// tbody il faut fait un algo qui populate le body surêment avec un flatMap
-// ex : categorie (afficher le nom de la clé,ex: fruits)
-// faire en sorte que quand je log chaque ligne du tableau pour aprés le mettre dans le tableau
-// + chaque ligne aura un btn pour supprimer
-
-// 2ieme PANNEAU CREER PRODUIT
-
-// Cree une modal <div> <form> <label> <input>
-// 4 inputs select, text , 2 number
-// btn annuler = cree et btn ajouter = nouveau et events sur les 2
-// Il faut 1 algo pour populate le btn select
-// 2ieme algo pour le btn ajouter, dans la catégorie choisie on ajoute un nouveau produit
-// Une fois fini on ferme la modal + vider notre tableau + recréer (refresh)
-
-// 3ieme PANNEAU CREER CATEGORIE
-
-// Même chose que 2 mais pas avec des produits mais des clés
-
-// <!> verif que les champs soit remplie si pas msg erreur
-
 let shoppingList = {
   products: {
     fruits: [
@@ -66,87 +14,85 @@ let shoppingList = {
     ],
   },
 
-  calculSubTotal: function (product) {
+  calculSubTotal(product) {
     return product.price * product.quantity;
   },
-  calculTotal: function () {
-    let total = 0;
-    for (const category in this.products) {
-      this.products[category].forEach((product) => {
-        total += this.calculSubTotal(product);
-      });
-    }
-    return total;
+
+  calculTotal() {
+    return Object.values(this.products)
+      .flat()
+      .reduce((total, product) => {
+        return total + this.calculSubTotal(product);
+      }, 0);
   },
 };
 
-//------------------------------- CREATE TABLE
-const createTable = () => {
-  const table = document.createElement('table');
-  const thead = document.createElement('thead');
-  const tbody = document.createElement('tbody');
-  const tfoot = document.createElement('tfoot');
+//------------------------------- CREATE TABLE & UPDATE
+const updateTable = () => {
+  const existingTable = document.querySelector('table');
+  if (existingTable) existingTable.remove();
 
+  const table = document.createElement('table');
+  table.className = 'w-full text-center border-collapse rounded shadow-md table-auto';
+  const thead = document.createElement('thead');
+  thead.className = 'text-white bg-[#115e59]';
+  const tbody = document.createElement('tbody');
+  tbody.className = 'bg-white divide-y divide-gray-200';
+
+  // Table header
   const headerRow = document.createElement('tr');
   ['Catégorie', 'Produit', 'Prix', 'Quantité', 'Sous-total', 'Action'].forEach((text) => {
     const th = document.createElement('th');
+    th.className = 'px-4 py-2 ';
     th.textContent = text;
     headerRow.appendChild(th);
   });
   thead.appendChild(headerRow);
+  // table.appendChild(thead); jsp
 
+  // Table body
   for (const category in shoppingList.products) {
     shoppingList.products[category].forEach((product) => {
       const row = document.createElement('tr');
-      // ------------------------------- ADD COL
+      row.className = 'hover:bg-gray-100';
       [
         category,
         product.product,
-        product.price,
+        product.price.toFixed(2),
         product.quantity,
-        shoppingData.calculateSubtotal(product),
-      ].forEach((value, index) => {
+        shoppingList.calculSubTotal(product).toFixed(2),
+      ].forEach((value) => {
         const td = document.createElement('td');
+        td.className = 'px-4 py-2 border';
         td.textContent = value;
         row.appendChild(td);
       });
 
-      //------------------------------- ADD DELETE BTN
-      const td = document.createElement('td');
+      const actionCell = document.createElement('td');
       const deleteBtn = document.createElement('button');
       deleteBtn.textContent = 'Supprimer';
+      deleteBtn.className =
+        'px-1 py-1 text-white bg-green-900 rounded hover:bg-green-900 ';
+
       deleteBtn.addEventListener('click', () => {
         deleteProduct(category, product);
-        updateTable;
+        updateTable();
       });
-      td.appendChild(deleteBtn);
-      row.appendChild(td);
+      actionCell.appendChild(deleteBtn);
+      row.appendChild(actionCell);
       tbody.appendChild(row);
     });
   }
 
   table.appendChild(thead);
   table.appendChild(tbody);
-  table.appendChild(tfoot);
-
-  return table;
+  document.body.appendChild(table);
 };
 
-//------------------------------- UPDATE TABLEAU
-const updateTable = () => {
-  const existingTable = document.querySelector('table');
-  if (existingTable) {
-    existingTable.remove();
-  }
-  document.body.appendChild(createTable());
-};
-
-//------------------------------- AJOUTER PRODUIT
+//------------------------------- ADD PRODUCT
 
 const addProduct = (category, productName, price, quantity) => {
-  if (!shoppingList.products[category]) {
-    shoppingList.products[category] = [];
-  }
+  if (!shoppingList.products[category]) shoppingList.products[category] = [];
   shoppingList.products[category].push({
     product: productName,
     price: parseFloat(price),
@@ -155,14 +101,14 @@ const addProduct = (category, productName, price, quantity) => {
   updateTable();
 };
 
-//------------------------------- AJOUTER CATEGORIES
+//------------------------------- ADD CATEGORY
 
 const addCategory = (categoryName) => {
   if (!shoppingList.products[categoryName]) {
     shoppingList.products[categoryName] = [];
     updateTable();
   } else {
-    alert("t'y es bête");
+    alert('Cette catégorie existe déjà !');
   }
 };
 
@@ -175,14 +121,15 @@ const deleteProduct = (category, product) => {
   if (shoppingList.products[category].length === 0) {
     delete shoppingList.products[category];
   }
+  updateTable();
 };
 
-//------------------------------- UPDATE SELECT
+//------------------------------- UPDATE CATEGORY SELECT
 
 const updateCategorySelect = () => {
-  const select = document.getElementById('category-select');
+  const select = document.querySelector('#category-select');
   if (select) {
-    select.innerHTML = ` `;
+    select.innerHTML = ``;
     Object.keys(shoppingList.products).forEach((category) => {
       const option = document.createElement('option');
       option.value = category;
@@ -192,43 +139,109 @@ const updateCategorySelect = () => {
   }
 };
 
-//------------------------------- CREATE ADD BTN
-
-const createAddProductButton = () => {
-  const btn = document.createElement('button');
-  btn.textContent = 'Ajoutez un produit svp';
-  btn.addEventListener('click', 'showAddProductModal');
-  document.appendChild('button');
-};
-
-//------------------------------- CREATE ADD PRODUCTS IN MODAL
-
-const createAddProductModal = () => {
-  const modal = document.createElement('div');
-  modal.className = 'hidden modal';
-  modal.id = 'addProductModal';
-
-  const overlay = document.createElement('div');
-  overlay.className = 'hidden overlay';
-  overlay.id = 'overlay';
-
-  const form = document.createElement('form');
-  const categorieLabel = document.createElement('label');
-  categorieLabel.textContent = 'Catégorie';
-
-  const categoriSelect = document.createElement('select');
-};
-
-//------------------------------- CREATE BTN
+//-------------------------------ADD CATEGORY AND ADD PRODUCTS BTN
 
 const createButtons = () => {
   const addProductButton = document.createElement('button');
   addProductButton.textContent = 'Ajouter un produit';
+  addProductButton.className =
+    'px-2 py-2 my-3 text-white bg-[#115e59] rounded hover:bg-[#042f2e] rounded-lg	';
   addProductButton.addEventListener('click', showAddProductModal);
   document.body.appendChild(addProductButton);
 
   const addCategoryButton = document.createElement('button');
   addCategoryButton.textContent = 'Ajouter une catégorie';
-  addCategoryButton.addEventListener('click', showAddCategoryModal);
+  addCategoryButton.className =
+    'px-2 py-2 my-3 text-white bg-[#115e59] rounded hover:bg-[#042f2e] rounded-lg	';
+  addCategoryButton.addEventListener('click', () => {
+    const categoryName = prompt('Nom de la nouvelle catéorie :');
+    if (categoryName) addCategory(categoryName);
+  });
   document.body.appendChild(addCategoryButton);
 };
+
+//------------------------------- CREATE MODAL FOR ADD PRODUCT
+
+const createAddProductModal = () => {
+  const modal = document.createElement('div');
+  modal.className =
+    'fixed inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-50';
+  modal.id = 'addProductModal';
+
+  modal.innerHTML = `
+     <div class="bg-white p-6 rounded shadow-lg w-96">
+      <h2 class="text-lg font-bold mb-4 text-center">Ajouter un produit</h2>
+      <form id="addProductForm" class="space-y-4">
+      
+        <label>
+          <span class="text-gray-800">Catégorie</span>
+          <select id="modal-category-select" class="w-full border rounded px-3 py-2">
+            ${Object.keys(shoppingList.products)
+              .map((category) => `<option value="${category}">${category}</option>`)
+              .join(' ')}
+          </select>
+        </label>
+        
+        <label>
+          <span class="text-gray-800">Produit</span>
+          <input type="text" id="modal-product-name" class="w-full border rounded px-3 py-2" />
+        </label>
+
+        <label>
+          <span class="text-gray-800">Prix</span>
+          <input type="number" id="modal-product-price" class="w-full border rounded px-3 py-2" />
+        </label>
+
+        <label>
+          <span class="text-gray-800">Quantité</span>
+          <input type="number" id="modal-product-quantity" class="w-full border rounded px-3 py-2" />
+        </label>
+        
+        <div class="flex justify-between">
+          <button type="button" id="cancel-button" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
+            Annuler
+          </button>
+          <button type="submit" class="px-4 py-2 bg-[#115e59] text-white rounded-lg hover:bg-[#042f2e]">
+            Ajouter
+          </button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // Btn annuler
+  document.querySelector('#cancel-button').addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+
+  // Soumission formulaire
+  document.querySelector('#addProductForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const category = document.querySelector('#modal-category-select').value;
+    const productName = document.querySelector('#modal-product-name').value;
+    const price = document.querySelector('#modal-product-price').value;
+    const quantity = document.querySelector('#modal-product-quantity').value;
+
+    if (category && productName && price && quantity) {
+      addProduct(category, productName, price, quantity);
+      modal.classList.add('hidden');
+    }
+  });
+};
+
+const showAddProductModal = () => {
+  const modal = document.querySelector('#addProductModal');
+  if (modal) {
+    const select = document.querySelector('#modal-category-select');
+    select.innerHTML = Object.keys(shoppingList.products)
+      .map((category) => `<option value ="${category}">${category}</option>`)
+      .join(' ');
+    modal.classList.remove('hidden');
+  }
+};
+
+createAddProductModal();
+createButtons();
+updateTable();
