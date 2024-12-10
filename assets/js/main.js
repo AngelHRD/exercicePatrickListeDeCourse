@@ -30,10 +30,10 @@ let shoppingList = {
 //------------------------------- CREATE TABLE & UPDATE
 const updateTable = () => {
   const existingTable = document.querySelector('table');
-  if (existingTable) existingTable.remove();
+  if (existingTable) existingTable.remove(); //pas obligatoire mais pour lisibilité mettre des moustaches
 
   const table = document.createElement('table');
-  table.className = 'w-full text-center border-collapse rounded shadow-md table-auto';
+  table.className = 'w-full text-center border-collapse rounded shadow-lg table-auto';
   const thead = document.createElement('thead');
   thead.className = 'text-white bg-[#115e59]';
   const tbody = document.createElement('tbody');
@@ -124,6 +124,7 @@ const deleteProduct = (category, product) => {
 //------------------------------- UPDATE CATEGORY SELECT
 
 const updateCategorySelect = () => {
+  //ici tu retourne une valeur donc map + return
   const select = document.querySelector('#category-select');
   if (select) {
     select.innerHTML = ``;
@@ -288,9 +289,6 @@ const showAddCategoryModal = () => {
   const modalCategory = document.querySelector('#addCategoryModal');
   if (modalCategory) {
     modalCategory.classList.remove('hidden');
-    // const category = document.querySelector('#modal-category-name');
-    // category.innerHTML = Object.keys{shoppingList.products}
-    // .
   }
 };
 
